@@ -1,0 +1,197 @@
+
+/* scripts */
+.selectedTool {
+    background: white;
+}
+.pointerEventsNone {
+    pointer-events: none;
+}
+.cursorNone {
+    cursor: none;
+}
+
+
+
+*{
+    margin:0;
+    padding:0;
+    user-select: none;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+}
+.zoom {
+    width: 50%;
+}
+
+
+
+
+
+.unselectedTool, .zoom {
+    padding: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 79;
+}
+
+.unselectedTool {
+    padding: 10px;
+}
+
+
+canvas {
+    margin-left:0;
+    position: absolute;
+    background: #00000000;
+}
+
+#container {
+    margin-left:0;
+    position: absolute;
+    background-color: rgba(29, 29, 78, 0.452);
+}
+
+#navbar {
+    position: absolute;
+    min-height: 100%;
+    max-height: 100%;
+    width: 180px;
+    background: #1b1b1b;
+    /* overflow-y: scroll; */
+    overflow-x: hidden;
+}
+
+#Sidebar {
+    position: absolute;
+    min-height: 100%;
+    width: 80px;
+    background: #e3e3e3;
+    margin:0px;
+    padding: 0px;
+}
+
+
+/* hover over shapes */
+.drawnshape{
+    transition: box-shadow 150ms;
+    color: rgba(255, 255, 255, 0.4);
+}
+.drawnshape:hover{
+    box-shadow: 0px 0px 15px 2px;
+    transition: box-shadow 300ms;
+}
+
+
+
+nav .text{
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    font-weight:600;
+    line-height: 65px;
+    background: #1e1e1e;
+    letter-spacing: 1px;
+}
+
+nav ul{
+    background: #1b1b1b;
+    height:100%;
+    width:100%;
+    list-style: none;
+}
+nav ul li{
+    line-height: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    
+}
+nav ul li a{
+    position: relative;
+    color: white;
+    text-decoration:none;
+    font-size: 18px;
+    padding-left: 30px;
+    font-weight: 500;
+    display: block;
+    width:100%;
+    border-right: 3px solid transparent;
+}
+nav ul li a:hover{
+    color:cyan;
+    background: #1e1e1e;
+    border-right-color: cyan;
+}
+nav ul ul{
+    position: static;
+    max-height:60%; 
+    display: none;
+    transition-duration: 1s;
+    
+}
+nav ul .local-show.show{
+    display: block;
+    
+}
+nav ul .box-show.show1{
+    display: block;
+}
+nav ul .ffdecks-show.show2{
+    display: block;
+}
+
+nav ul ul li{
+    line-height: 42px;
+    border-bottom: none;
+}
+nav ul ul li a{
+    font-size: 17px;
+    color: #e6e6e6;
+    padding-left: 40px;
+}
+nav ul li a i{
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    font-size: 22px;
+    transition: transform 0.4s;
+}
+nav ul li a i.rotate{
+    transform: translateY(-50%) rotate(-180deg);
+}
+img.FFDecks{
+    border-radius: 3px;
+}
+
+.bin{
+    position: absolute;
+    right: 0px;
+    bottom:  0px;
+    padding-bottom: 22px;
+    padding: 25px;
+}
+.bin:hover{
+    border-radius: 50%;
+    color: red;
+    box-shadow: red 0px 0px 30px, inset red 0px 0px 20px;
+}
+
+.save-btn{
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    position: absolute;
+    right: 0px;
+    top:  0px;
+    padding-top: 22px;
+    padding: 25px;
+}
+
+.save-btn:hover{
+    border-radius: 50%;
+    color: white;
+    box-shadow: cyan 0px 0px 30px, inset cyan 0px 0px 20px;
+}
