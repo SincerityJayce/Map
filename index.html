@@ -24,10 +24,20 @@
                 <!-- <button id='zoom+' class='zoom'>+</button>
                 <button id='zoom-' class='zoom'>-</button> -->
                 <li>
-                    <a href='#' class='local-btn'>Local Images
+                    <a href='#' class='local-btn'>Load Map
                         <i class="fa fa-caret-down first"></i>
                     </a>
-                    <ul id="storedImages" class='local-show'></ul>
+                    <ul id="storedImages" class='local-show'>
+                        <li>
+                        <input 
+                        type='text'
+                        name='mapload'
+                        id='loadmap'
+                        onpaste="onPasteMapLink(event)"
+                        placeholder="Paste map info here..."/>
+                        </li>
+                    </ul>
+                    
                 </li>
                 <li>
                     <a href='#' class='ffdecks-btn'>FFDecks
@@ -42,15 +52,7 @@
                             placeholder="Paste link to deck here..."/>
                     </ul>
                 </li>
-                                <li>
-                    <a href='#' class='input'>Load Map</a>
-                    <input 
-                    type='text'
-                    name='mapload'
-                    id='loadmap'
-                    onpaste="onPasteMapLink(event)"
-                    placeholder="Paste map info here..."/>
-                </li>
+
 
                 
             </ul>
