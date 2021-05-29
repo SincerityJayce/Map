@@ -84,13 +84,6 @@ resize();
 display.remove();
 
 
-window.addEventListener('click', 
-    function (e){
-        console.log(e)
-    })
-
-
-
 const deckLinkBox = document.getElementById("ffdeckload");
 
 

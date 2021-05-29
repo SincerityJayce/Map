@@ -47,8 +47,11 @@ function setMouseXY(event){
 
 
 function createTheoreticalShape(){
+    console.log('theorising')
     let [x, y] = convertCanvasXYintoFileXY(mouseOnCanvas.canvasX, mouseOnCanvas.canvasY);
     theoreticalShape = new BasicShape(activeTool.src, x, y,activeTool.naturalWidth ,activeTool.naturalHeight,[]);
+    theoreticalShape.identify();
+    console.log(theoreticalShape);
 }
 
 function ask_IsMouseOverCanvas(event){

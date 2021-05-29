@@ -11,7 +11,6 @@ function takeDeckRequest(decklink){
   fetch(request).then(function(response) {
       return response.json();
   }).then(function(deck){
-    console.log(deck)
       importCards(deck);
       loadAllFFDecksTools();
       deckLinkBox.placeholder = "FF: " + deck['name'];

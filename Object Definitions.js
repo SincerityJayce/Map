@@ -4,21 +4,34 @@ var arrowObj = undefined;
 var pointsICouldStartMyArrowFrom = undefined;
 var arrow = new Image();
 var arrowStart = undefined;
-arrow.src = 'https://github.com/SincerityJayce/Map/blob/main/images/arrow.png';
+arrow.src = 'images/arrow.png';
 var allCreatedObjects = [];
 var shapeBeingDragged = undefined;
 var mouseStarteDraggingFrom = undefined;
+var projectId = createUUID();
 
-function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
-    this.id = "BasicShape" + lastId;
+function createUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+       return v.toString(16);
+    });
+ }
+
+
+function createShapeId(){
+    id = projectId + lastId;
     lastId += 1;
-    console.log(1)
+    return id;
+}
+
+function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
+    this.id = id
 
 
     this.src = shape;
     this.selfScale = selfScale;
 
-    this.deleted = false;
+    this.alive = true;
 
     this.shape = new Image();
     this.shape.draggable = false;
@@ -29,7 +42,6 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
     container.appendChild(this.htmlBox);
     this.htmlBox.id = this.id;
     this.htmlBox.classList.add('drawnshape');
-    console.log(2)
     this.shape.src = shape;
 
     this.shape.classList.add('FFDecks');
@@ -39,7 +51,6 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
     this.y = y;
     this.width = this.shape.naturalWidth;
     this.height = this.shape.naturalHeight;
-    console.log(3)
     this.draggedfrom = {x:undefined, y:undefined};
     this.shape.addEventListener('mousedown', 
     function(event){
@@ -56,12 +67,15 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
     this.shape.addEventListener('mouseup',
         function(e){
             if(iAmDrawingAnArrowNow){
-                let a = new Arrow(arrowObj, thisShape);
+                thisShape.recieveArrow()
                 resize()
             }
         })
 
-    console.log(4)
+    this.recieveArrow = function(e){
+        let a = new Arrow(arrowObj, thisShape);
+        }
+
     this.corners = function(){
         let [x, y] = convertFileXYintoCanvasXY(this.x, this.y);
         let [w, h] = convertFileWHintoCanvasWH(this.width, this.height);
@@ -79,7 +93,6 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
     this.draw = function(){
         this.width = this.shape.naturalWidth;
         this.height = this.shape.naturalHeight;
-        console.log(this.x, this.y, this.w, this.h)
         let [x, y] = convertFileXYintoCanvasXY(this.x, this.y);
         // //uncomment this to draw onto canvas
         let [w, h] = convertFileWHintoCanvasWH(this.width, this.height);
@@ -105,10 +118,11 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
         }
     }
 
-
-    this.arrows = arrows;
+    this.arrowcodes = arrows
+    this.arrows = [];
     this.drawarrows = function(){
         for(var i = 0; i < thisShape.arrows.length; i++){
+            console.log('drawing this arrow', thisShape.arrows[i])
             thisShape.arrows[i].draw();
         }
     
@@ -118,15 +132,23 @@ function BasicShape (shape, x, y, w, h, arrows, selfScale = 1){
         let [x, y] = convertFileXYintoCanvasXY(this.x, this.y);
         let [w, h] = convertFileWHintoCanvasWH(this.width, this.height);
         cDisplay.drawImage(this.shape, x-w/2, y-h/2, w, h);
-    }
+    }   
 
     this.delete = function (){
-        this.shape.remove();
-        this.deleted = true;
-        this.htmlBox.remove()
-        delete this.shape;
-        delete this.htmlBox;
+        thisShape.shape.remove();
+        thisShape.alive = false;
+        thisShape.htmlBox.remove()
+        delete thisShape.shape;
+        delete thisShape.htmlBox;
         delete thisShape;
+    }
+
+    this.identify=function (){
+        let newID = createShapeId()
+        idKeys[thisShape.id] = newID
+        thisShape.id = newID;
+        thisShape.htmlBox.id = thisShape.id;
+        thisShape.shape.id = thisShape.id;
     }
 
     allCreatedObjects.push(this);
@@ -166,10 +188,21 @@ function findShapeFromId(id){
     for (var i=0; i<drawnScreenShapes.length;i+=1){
         if (id == drawnScreenShapes[i].id){
             o = drawnScreenShapes[i];
-            console.log(o);
+            console.log(o, 'shape from id');
         }
     }
 return o
+}
+
+function FoundShape(id){
+    let o = undefined;
+    for (var i=0; i<drawnScreenShapes.length;i+=1){
+        if (id == drawnScreenShapes[i].id){
+            o = drawnScreenShapes[i];
+            console.log(o, 'shape from id');
+        }
+    }
+    return o;
 }
 
 const bin = document.getElementById('bin');

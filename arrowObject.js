@@ -3,14 +3,16 @@ function Arrow (start, target, image){
     this.start = start;
     this.target = target;
 
+    let thisArrow = this;
     this.draw = function(){
-        if (this.target.deleted){
-            delete this;
-        }else{
+        console.log('arrow created,', this)
+        if (this.target.alive){
             let [sx, sy] =convertFileXYintoCanvasXY (this.start.x, this.start.y)
             let start = {x:sx, y:sy};
             let [fx, fy] =convertFileXYintoCanvasXY (this.target.x, this.target.y)
             drawArrowBetweenPoints({x:sx, y:sy}, {x:fx, y:fy}, c)
+        }else{
+            delete thisArrow;
         }
     }
 
