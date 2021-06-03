@@ -77,12 +77,20 @@ canvas {
 
 
 /* hover over shapes */
-.drawnshape{
+/* .drawnshape{
     transition: box-shadow 150ms;
     color: rgba(255, 255, 255, 0.4);
 }
 .drawnshape:hover{
     box-shadow: 0px 0px 15px 2px;
+    transition: box-shadow 300ms;
+} */
+#container div{
+    transition: box-shadow 150ms;
+    color: rgba(255, 255, 255, 0.4);
+}
+#container div:hover{
+    box-shadow: 0px 0px 30px -3px;
     transition: box-shadow 300ms;
 }
 
@@ -163,8 +171,8 @@ nav ul li a i{
 nav ul li a i.rotate{
     transform: translateY(-50%) rotate(-180deg);
 }
-img.FFDecks{
-    border-radius: 3px;
+img.FFDecks, #HiYoutube{
+    border-radius: 3%;
 }
 
 .bin{

@@ -20,33 +20,46 @@
         </section>
 
         <nav class='navbar' id='navbar'>
-            <ul>
+            <ul id='navlist'>
                 <!-- <button id='zoom+' class='zoom'>+</button>
                 <button id='zoom-' class='zoom'>-</button> -->
                 <li>
-                    <a href='#' class='local-btn'>Tools
+                    <a href='#' class='local-btn'>Local Images
                         <i class="fa fa-caret-down first"></i>
                     </a>
                     <ul id="storedImages" class='local-show'>
-                        <li>
                         <input 
                         type='text'
                         name='mapload'
                         id='loadmap'
                         onpaste="onPasteMapLink(event)"
                         placeholder="Paste map info here..."/>
-                        </li>
+                    </ul>
+                </li>
+                <li id='YouTube-Tab' >
+                    <a href='#' class='box-btn'>Youtube
+                        <i class="fa fa-caret-down second"></i>
+                    </a>
+                    <ul id="YTClips" class='box-show'>
                         <li>
-                            <a>Shift + Click + Drag to Draw Arrows</a>
+                            <input 
+                            type='text'
+                            name='YoutubeClipLoad'
+                            id='YoutubeClipLoad'
+                            onpaste="onPasteDeckLink(event)"
+                            placeholder="Paste a youtube link here..."/>
                         </li>
                     </ul>
-                    
                 </li>
+                <!-- <li>
+                    <a href='#' class='input'>Arrow Options</a>
+
+                </li> -->
                 <li>
                     <a href='#' class='ffdecks-btn'>FFDecks
                         <i class="fa fa-caret-down third"></i>
                     </a>
-                    <ul id="FFdecks" class='ffdecks-show'>
+                    <ul id="FFdecks" class='ffdecks-show'style='max-block-size: 0%;'>
                         <input 
                             type='text'
                             name='ffdeckload'
@@ -54,7 +67,6 @@
                             onpaste="onPasteDeckLink(event)"
                             placeholder="Paste link to deck here..."/>
                     </ul>
-                    
                 </li>
 
                 
@@ -84,22 +96,21 @@
 
 
 
-        <script src='XY Converters.js'></script>
-        <script src='Object Definitions.js'></script>
-        <script src='SelectTool.js'></script>
-        <script src='Draw On Canvas.js'></script>
-        <script src='zoom.js'></script>
-        <script src='ArrowMath.js'></script>
+        <script src='math\XY Converters.js'></script>
+        <script src='Arrows and Drawings\Object Definitions.js'></script>
+        <script src='Arrows and Drawings\SelectTool.js'></script>
+        <script src='Arrows and Drawings\Draw On Canvas.js'></script>
+        <script src='math\zoom.js'></script>
+        <script src='Arrows and Drawings\ArrowMath.js'></script>
         
-        <!-- <script src='selectHTMLImages.js'></script> -->
-        <script src='arrowObject.js'></script>
+        <script src='Arrows and Drawings\arrowObject.js'></script>
         
-
-        <script src='save.js'></script>
-        <script src='DragShapes.js'></script>
-        <script src='ffdecksRequest.js'></script>
+        <script src='datahandling\save.js'></script>
+        <script src='Arrows and Drawings\DragShapes.js'></script>
+        <script src='datahandling\ffdecksRequest.js'></script>
         
-
-        <script src='Screenload.js'></script>
+        <script src='ClipLoader.js'></script>
+        <!-- <script src='VideoObject.js'></script> -->
+        <script src='datahandling\Screenload.js'></script>
     </body>
 </html>
