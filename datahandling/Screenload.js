@@ -70,7 +70,7 @@ var YTAPIfirstScriptTag;
 function invokeYoutubeApi(){
     console.log('invoked');
     YTAPItag = document.createElement('script');
-    YTAPItag.src = "http://www.youtube.com/player_api";
+    YTAPItag.src = "https://www.youtube.com/player_api";
     YTAPIfirstScriptTag = document.getElementsByTagName('script')[0];
     YTAPIfirstScriptTag.parentNode.insertBefore(YTAPItag, YTAPIfirstScriptTag);
 }
