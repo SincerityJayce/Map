@@ -53,7 +53,8 @@ canvas {
 #container {
     margin-left:0;
     position: absolute;
-    background-color: rgba(29, 29, 78, 0.452);
+    overflow: hidden;
+    /* background-color: rgba(29, 29, 78, 0.452); */
 }
 
 #navbar {
@@ -76,22 +77,14 @@ canvas {
 }
 
 
-/* hover over shapes */
-/* .drawnshape{
-    transition: box-shadow 150ms;
-    color: rgba(255, 255, 255, 0.4);
-}
-.drawnshape:hover{
-    box-shadow: 0px 0px 15px 2px;
-    transition: box-shadow 300ms;
-} */
 #container div{
-    transition: box-shadow 150ms;
-    color: rgba(255, 255, 255, 0.4);
+    transition: box-shadow 100ms;
+    color: rgb(41, 170, 209);
+    position:relative;
 }
 #container div:hover{
-    box-shadow: 0px 0px 30px -3px;
-    transition: box-shadow 300ms;
+    box-shadow: 0px 0px 30px 5px;
+    transition: box-shadow 200ms;
 }
 
 
@@ -144,6 +137,9 @@ nav ul .local-show.show{
     display: block;
     
 }
+nav ul .youtube-show.show3{
+    display: block;
+}
 nav ul .box-show.show1{
     display: block;
 }
@@ -190,7 +186,7 @@ img.FFDecks, #HiYoutube{
 
 .save-btn{
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.4);
+    color: black;
     position: absolute;
     right: 0px;
     top:  0px;
@@ -200,6 +196,65 @@ img.FFDecks, #HiYoutube{
 
 .save-btn:hover{
     border-radius: 50%;
-    color: white;
+    color: cyan;
     box-shadow: cyan 0px 0px 30px, inset cyan 0px 0px 20px;
 }
+
+.sticky{
+    position:sticky;
+}
+#container div div{
+    overflow: clip;
+    display: grid;
+    place-content: center;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.80);
+    border-radius: 10%;
+    /* border: 3px solid black; */
+}
+#container div div div{
+    background-color: #00000000;
+}
+
+
+
+
+
+
+
+
+
+/* merge this with the other menu css at some point */
+#shapemMenuDiv{
+    position: absolute;
+    background: #1b1b1b2f;
+    color: white;
+}
+#shapemMenuDiv ul{
+    background-color: #1b1b1b48;
+}
+#shapemMenuDiv ul{
+    list-style: none;
+}
+
+#shapemMenuDiv ul li{
+    background-color: #1b1b1b00;
+    border-bottom: 1px solid rgba(25, 255, 255, 0.1);
+}
+#shapemMenuDiv ul li a{
+    text-decoration: none;
+    font-size: 18px;
+    padding-left: 20px;
+    font-weight: 500;
+    display: block;
+    width: 100%;
+    border-right: 3px solid #1b1b1b;
+}
+#shapemMenuDiv ul li a:hover{
+    color:cyan;
+    border-right-color: cyan;
+}
+#shapemMenuDiv .text{
+    color: white;
+}
+/* menu css */

@@ -37,18 +37,25 @@
                     </ul>
                 </li>
                 <li id='YouTube-Tab' >
-                    <a href='#' class='box-btn'>Youtube
+                    <a href='#' class='youtube-btn'>Youtube
                         <i class="fa fa-caret-down second"></i>
                     </a>
-                    <ul id="YTClips" class='box-show'>
+                    <ul id="YTClips" class='youtube-show'>
                         <li>
                             <input 
                             type='text'
                             name='YoutubeClipLoad'
                             id='YoutubeClipLoad'
-                            onpaste="onPasteDeckLink(event)"
                             placeholder="Paste a youtube link here..."/>
                         </li>
+                    </ul>
+                </li>
+                <li id='textBoxes-Tab' >
+                    <a href='#' class='box-btn'>Text Boxes
+                        <i class="fa fa-caret-down fourth"></i>
+                    </a>
+                    <ul id="Text Box Shelf" class='box-show'>
+
                     </ul>
                 </li>
                 <!-- <li>
@@ -72,6 +79,21 @@
                 
             </ul>
         </nav>
+
+
+        <div id='shapemMenuDiv'>
+            <ul id='shapeMenu'>
+                <li><a>First</a></li>
+                <li><a>Second</a></li>
+                <li><a>Third</a></li>
+            </ul>
+        </div>
+
+
+
+
+
+
         <i id='bin' class="fa fa-trash bin fa-2x" aria-hidden="true"></i>
 
         <i id='save-btn' class="fa fa-save save-btn fa-2x" aria-hidden="true"></i>
@@ -82,16 +104,18 @@
                 $('nav ul .local-show').toggleClass('show');
                 $('nav ul .first').toggleClass('rotate');
             });
+            $('.youtube-btn').click(function(){
+                $('nav ul .youtube-show').toggleClass('show3');
+                $('nav ul .second').toggleClass('rotate');
+            });
             $('.box-btn').click(function(){
                 $('nav ul .box-show').toggleClass('show1');
-                $('nav ul .second').toggleClass('rotate');
+                $('nav ul .fourth').toggleClass('rotate');
             });
             $('.ffdecks-btn').click(function(){
                 $('nav ul .ffdecks-show').toggleClass('show2');
                 $('nav ul .third').toggleClass('rotate');
             });
-
-
         </script>
 
 
@@ -109,7 +133,9 @@
         <script src='Arrows and Drawings\DragShapes.js'></script>
         <script src='datahandling\ffdecksRequest.js'></script>
         
-        <script src='ClipLoader.js'></script>
+        <script src='Youtube\ClipLoader.js'></script>
+        <script src='datahandling\rightClickMenu.js'></script>
+        <script src='textboxes.js'></script>
         <!-- <script src='VideoObject.js'></script> -->
         <script src='datahandling\Screenload.js'></script>
     </body>

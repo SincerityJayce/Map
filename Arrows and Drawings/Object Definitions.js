@@ -1,5 +1,3 @@
-
-
 var arrowObj;
 var arrow = new Image();
 arrow.src = 'images/arrow.png';
@@ -25,7 +23,7 @@ function createShapeId(){
 
 
 function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
-    let thisShape = this;
+    var thisShape = this;
     this.src = shape
     this.id = id;
     this.src = shape;
@@ -34,28 +32,54 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
     this.y = y;
 
     this.alive = true;
+    this.imageOn = true;
 
-
+    // addRightClickMenuTo(this);
 
 
     this.shapeDiv = initialiseShapeDiv();
-    this.shape =makeShape();
-    this.shape.src = this.src;
+    this.shape =makeShape(shape);
+    this.text;
 
+    // this.shape.src = this.src;
 
     this.w = this.shape.naturalWidth;
     this.h = this.shape.naturalHeight;
-    this.width = this.w*selfScale;
-    this.height = this.h*selfScale;
+    this.width = this.shape.width*selfScale;
+    this.height = this.shape.height*selfScale;
+    this.shapeDiv.appendChild(this.shape);
+    this.shape.addEventListener('load', function(){
+        thisShape.draw();
+    })
 
 
 
+    this.shapeDiv.addEventListener('contextmenu', function (e){
+        contextShape = thisShape;
+        openShapeMenu(e)});
+
+
+
+
+
+
+    this.onDraw = function(){
+        console.log(thisShape.src)
+        if (thisShape.src.includes('images/box.png')){
+            thisShape.textBox = document.createElement('div');
+            let s = thisShape.textBox;
+            s.setAttribute('contenteditable', 'true');
+            s.innerHTML = ""
+            s.classList.add('textbox');
+            thisShape.shapeDiv.appendChild(s);
+            thisShape.imageOn = false;
+        }
+    }
 
 
     // dragging and arrows
     this.draggedfrom = {x:undefined, y:undefined};
 
-    
     this.shapeDiv.addEventListener('mousedown', 
     function(event){
         if (event.shiftKey){
@@ -100,35 +124,74 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
     return points;
     }
 
-
+    this.divStyleMath;
     this.aspect;
     //Draws image onto canvas
     this.draw = function(){
+        this.width = this.shape.naturalWidth*this.selfScale;
+        this.height = this.shape.naturalHeight*this.selfScale;
         let [x, y] = convertFileXYintoCanvasXY(this.x, this.y);
         let [w, h] = convertFileWHintoCanvasWH(this.width, this.height);
         // //uncomment this to draw onto canvas
         // c.drawImage(shape, x, y, w, h);
 
-
+        this.divStyleMath={
+            left:(x-w/2)/scale,
+            top : ((y-h/2)/scale),
+            maxW :((canvasAreaW-x+w/2)/scale),
+            maxH : ((canvasAreaH-y+h/2)/scale)
+        }
+        let d = this.divStyleMath;
         this.shapeDiv.style = ( 
-            'left:'+((x-w/2)/scale)+
-            ';top:'+((y-h/2)/scale)+
-            ';position: absolute'+
-            ';max-width:'+((canvasAreaW-x+w/2)/scale)+
-            ';max-height:'+((canvasAreaH-y+h/2)/scale)+
+            'left:'+d.left+
+            ';top:'+d.top+
+            ';position: fixed'+
             ';overflow:hidden;');
+            
+        this.textBox?.style.fontSize
         this.aspect = this.shape.naturalWidth/this.shape.naturalHeight;
-        this.shape.height = this.height/ totalScale; // JUST BY CHANGING THIS TO SCALE RATHER THAN TOTAL SCALE, YOU GET COOL EFFECT
+        this.shape.height = this.height/ totalScale; // JUST BY CHANGING THIS TO SCALE RATHER THAN TOTAL SCA LE, YOU GET COOL EFFECT
         this.shape.width = this.shape.height*this.aspect;
 
-        this.shape.remove();
+
         if(ask_isTheShapeInitialisingOnscreen(this, x-w/2, y-h/2)){
+
+            if(thisShape== contextShape){
+                formatRightClickMenu();
+            }
+
+            if (thisShape.imageOn){
+                this.shapeDiv.appendChild(this.shape);
+            }else{this.shape.remove();}
+
+
             if(thisShape.vidPlayer){
+                if((this.vidDiv?.parentNode ==this.shapeDiv)==false){
+                    this.shapeDiv.appendChild(this.vidDiv)
+                }
+
                 let v = this.vidPlayer.getIframe()
                 v.height=this.shape.height;
                 v.width=this.shape.width;
-            }else{this.shapeDiv.appendChild(this.shape);}
             }
+
+            if(thisShape.textBox){
+                let t = this.textBox;
+                if((t.parentNode ==this.shapeDiv)==false){
+                    this.shapeDiv.appendChild(t)
+                }
+                t.style="height:" + this.shape.height + "; width:" + this.shape.width+";"
+            }
+
+
+
+
+
+        }else{
+            this.shape.remove();
+            this.vidDiv?.remove();
+            this.textBox?.remove();
+        }
             
 
 
@@ -158,7 +221,7 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
     this.arrowcodes = arrows
     this.arrows = [];
 
-    this.shape.addEventListener('mouseup',
+    this.shapeDiv.addEventListener('mouseup',
     function(e){if(iAmDrawingAnArrowNow){
                 thisShape.recieveArrow();
                 resize(); }})
@@ -224,6 +287,7 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
         thisShape.shapeDiv.appendChild(thisShape.vidDiv);
         thisShape.shape.remove();
         console.log(thisShape.YTid[0][-11])
+        thisShape.imageOn = false;
         let newPlayer = new YT.Player(thisShape.vidDiv.id,{
             height: thisShape.shape.height,
             width: thisShape.shape.width,
@@ -240,8 +304,11 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
             //   'onReady': thisShape.addListeners
             }});
         thisShape.vidPlayer = newPlayer;
-        thisShape.vidPlayer.getIframe().classList.add('pointerEventsNone');
+        thisShape.vidDiv = thisShape.vidPlayer.getIframe();
+        thisShape.vidDiv.classList.add('pointerEventsNone');
     }
+
+    
 
 
 
@@ -283,13 +350,17 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
 }
 
 
-function makeShape(){
-    return styleShape(new Image())
+function makeShape(src){
+    return styleShape(new Image(), src)
 }
-function styleShape(shape){
+function styleShape(shape, src){
+    shape.src = src;
+    shape.width=0;
+    shape.height=0;
     shape.draggable = false;
     shape.classList.add('drawnshape');
     shape.classList.add('FFDecks');
+
     return shape
 }
 
@@ -312,8 +383,8 @@ function initialiseShapeDiv(){
 
 
 function ask_isTheShapeInitialisingOnscreen(object, x, y){
-    let xn = (x/scale + object.shape.width);
-    let yn = (y/scale + object.shape.height);
+    let xn = (x/scale + object.width);
+    let yn = (y/scale + object.height);
     x = x/scale;
     y = y/scale;
     if (xn > 0 && x < window.innerWidth &&
@@ -367,6 +438,10 @@ bin.addEventListener('mouseup',
 
         }
         if (activeTool){
+            if(activeTool.parentNode == (ytClipList || ffdecksBar)){
+                activeTool.remove();
+                delete activeTool
+            }
             unselectAllTools()
         }
     })

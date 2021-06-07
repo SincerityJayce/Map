@@ -77,6 +77,7 @@ function drawTheoreticalShapeOnMouseMove(event){
 // Paint and unselect the tool
 function drawTheoreticalShapeOnClick(event){
     [theoreticalShape.x, theoreticalShape.y] = convertCanvasXYintoFileXY(mouseOnCanvas.canvasX, mouseOnCanvas.canvasY);
+    theoreticalShape.onDraw();
     theoreticalShape.draw();
     drawnScreenShapes.push(theoreticalShape);
     unselectAllTools();

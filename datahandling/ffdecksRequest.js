@@ -1,6 +1,7 @@
 const deckLinkBox = document.getElementById("ffdeckload");
 
 function onPasteDeckLink(e){
+  e.preventDefault();
   let link = e.clipboardData.getData('text');
   deckLinkBox.value = "Loading...";
   takeDeckRequest(link);
