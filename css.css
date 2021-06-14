@@ -58,10 +58,12 @@ canvas {
 }
 
 #navbar {
+    text-align: right;
+
     position: absolute;
     min-height: 100%;
     max-height: 100%;
-    width: 180px;
+    width: 12vw;
     background: #1b1b1b;
     /* overflow-y: scroll; */
     overflow-x: hidden;
@@ -69,7 +71,7 @@ canvas {
 
 #Sidebar {
     position: absolute;
-    min-height: 100%;
+    /* min-height: 100%; */
     width: 80px;
     background: #e3e3e3;
     margin:0px;
@@ -77,21 +79,29 @@ canvas {
 }
 
 
-#container div{
-    transition: box-shadow 100ms;
-    color: rgb(41, 170, 209);
+#container .drawnshape{
+    /* border-radius: 3%; */
+    transition: box-shadow 150ms;
+    color: white;
     position:relative;
 }
-#container div:hover{
-    box-shadow: 0px 0px 30px 5px;
-    transition: box-shadow 200ms;
+#container .drawnshape:hover,
+.drawnshape.contextShape{
+    box-shadow: 0px 0px 40px -10px, inset white 0px 0px 23px -8px;
+    transition: box-shadow 300ms;
 }
+img.drawnshape{
+    position: absolute;
+    left:0;
+    top:0;
+}
+
 
 
 
 nav .text{
     color: white;
-    text-align: center;
+    text-align: right;
     font-size: 25px;
     font-weight:600;
     line-height: 65px;
@@ -104,6 +114,7 @@ nav ul{
     height:100%;
     width:100%;
     list-style: none;
+    position: relative;
 }
 nav ul li{
     line-height: 60px;
@@ -115,15 +126,17 @@ nav ul li a{
     color: white;
     text-decoration:none;
     font-size: 18px;
-    padding-left: 30px;
+    padding-right: 40px;
     font-weight: 500;
     display: block;
     width:100%;
     border-right: 3px solid transparent;
+    transition: color 0.3s;
+    transition: background 0.3s ease;
 }
 nav ul li a:hover{
     color:cyan;
-    background: #1e1e1e;
+    background: #222222;
     border-right-color: cyan;
 }
 nav ul ul{
@@ -151,6 +164,15 @@ nav ul ul li{
     line-height: 42px;
     border-bottom: none;
 }
+nav ul input{
+    width: 100%;
+    top:0px;
+    left: 0px;  
+    text-align: left;
+    border: #00000000;
+    background: #1b1b1b;
+    border-bottom: 2px solid cyan;
+}
 nav ul ul li a{
     font-size: 17px;
     color: #e6e6e6;
@@ -167,9 +189,6 @@ nav ul li a i{
 nav ul li a i.rotate{
     transform: translateY(-50%) rotate(-180deg);
 }
-img.FFDecks, #HiYoutube{
-    border-radius: 3%;
-}
 
 .bin{
     position: absolute;
@@ -181,7 +200,7 @@ img.FFDecks, #HiYoutube{
 .bin:hover{
     border-radius: 50%;
     color: red;
-    box-shadow: red 0px 0px 30px, inset red 0px 0px 20px;
+    box-shadow: red 0px 0px 30px, inset red 0px 0px 30px;
 }
 
 .save-btn{
@@ -192,30 +211,81 @@ img.FFDecks, #HiYoutube{
     top:  0px;
     padding-top: 22px;
     padding: 25px;
+    color: white;
 }
 
 .save-btn:hover{
     border-radius: 50%;
-    color: cyan;
+    /* color: cyan; */
     box-shadow: cyan 0px 0px 30px, inset cyan 0px 0px 20px;
 }
 
 .sticky{
     position:sticky;
 }
+
 #container div div{
-    overflow: clip;
-    display: grid;
-    place-content: center;
-    color: white;
-    background-color: rgba(0, 0, 0, 0.80);
-    border-radius: 10%;
-    /* border: 3px solid black; */
-}
-#container div div div{
-    background-color: #00000000;
+    box-shadow: none;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+.vidslider{
+    position: absolute;
+    bottom: 0px;
+    left:0px;
+    width: 100%;
+}
+.slidecontainer{
+    height: 80px;
+}
+
+.clickdiv{
+    position: relative;
+    width:100%;
+    height: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.textbox:focus{
+    outline: #00000000;
+}
+.textbox .text{
+    width: 100%;
+}
+.resizable{
+    resize: both;
+    /* background: rgba(43, 107, 107, 0.925); */
+    border-radius:6px;
+}
+div.resizable div, div.resizable div div{
+    width: 100%;
+    height: 100%;
+}
+/* div.resizable div div{
+    display: grid;  
+    place-content: center;
+} */
 
 
 
@@ -225,13 +295,79 @@ img.FFDecks, #HiYoutube{
 
 
 /* merge this with the other menu css at some point */
+
+#shapemMenuDiv ul .input-holder input{
+    width: 100%;
+    outline: #00000000;
+    background-color: #00000000;
+    border: none;
+    border-bottom: 2px solid #3a3a3a;
+    height: 30px;
+}
+.input-holder input:focus{
+    border-bottom: 2px solid cyan;
+
+}
+
+
+
+
+
+#shapemMenuDiv ul .fancyInputOuter a{
+    position: absolute;
+    height: 100%;
+    pointer-events: none;
+    text-align: right;
+}
+/* #shapemMenuDiv ul .fancyInputOuter a text{
+    padding-right: 20px;
+} */
+#shapemMenuDiv ul .fancyInputOuter{
+    position: relative;
+    height: 30px;
+}
+
+#shapemMenuDiv ul .fancyInputOuter input{
+    position:absolute;
+    height: 100%;
+    width:170%;
+    color: white;
+    text-align: right;
+    transition: height 0.3s ease;
+    outline: #00000000;
+    background-color: #00000000;
+    border: none;
+    right: -70%;
+    bottom: 0;
+    transition: right 0.2s;
+}
+
+
+#shapemMenuDiv ul .fancyInputOuter input:focus{
+    color: white;
+    text-align: right;
+
+
+    right: 0px;
+}
+#shapemMenuDiv ul .fancyInputOuter input:focus ~ a {
+    transition: top 100 ease-out, font-size 100 ease-in;
+    top: -25%;
+    font-size:smaller;
+    color: cyan;
+}
+
 #shapemMenuDiv{
     position: absolute;
-    background: #1b1b1b2f;
+    background-color: #1b1b1b00;
     color: white;
+    width: 100px;
+    
 }
 #shapemMenuDiv ul{
-    background-color: #1b1b1b48;
+    background-color: #1b1b1bd2;
+    border-bottom: 3px solid cyan;
+    line-height: 35px;
 }
 #shapemMenuDiv ul{
     list-style: none;
@@ -239,22 +375,87 @@ img.FFDecks, #HiYoutube{
 
 #shapemMenuDiv ul li{
     background-color: #1b1b1b00;
-    border-bottom: 1px solid rgba(25, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(25, 255, 255, 0.3);
+    border-right: 3px solid #1b1b1b;
+    transition: color 0.3s;
 }
 #shapemMenuDiv ul li a{
+    text-align: justify;
     text-decoration: none;
     font-size: 18px;
-    padding-left: 20px;
+    padding-right: 20px;
     font-weight: 500;
     display: block;
-    width: 100%;
-    border-right: 3px solid #1b1b1b;
+    color: white;
+    top: -10%;
+    transition: color 0.1s, top 0.3s ease-in, font-size 0.3s ease-in;
+
+
 }
-#shapemMenuDiv ul li a:hover{
-    color:cyan;
+
+#shapemMenuDiv ul li:hover{
     border-right-color: cyan;
+}
+#shapemMenuDiv ul li:hover a{
+    color:cyan;
+
 }
 #shapemMenuDiv .text{
     color: white;
 }
 /* menu css */
+
+
+.input-holder input{
+    width: 100%;
+    outline: #00000000;
+    background-color: #00000000;
+    border: none;
+    border-bottom: 2px solid #3a3a3a;
+    height: 30px;
+}
+.input-holder input:focus{
+    border-bottom: 2px solid cyan;
+
+}
+.input-holder{  
+    height: 40px;
+
+}
+.fancyInputOuter{
+    position: relative;
+    overflow: hidden;
+}
+.input-holder a{
+    font-size: medium;
+    padding-left: 0px;
+    left:0px;
+    position: absolute;
+    height: 100%;
+    pointer-events:none;
+}
+
+
+.hiddenYT{
+    position: absolute;
+    left:-100%;
+}
+#opaqueYTLogo{
+    position: absolute;
+    opacity: 0.5;
+    height: 30%;
+}
+.textbox{
+    position: absolute;
+    top: 0;
+    left:0;
+    text-align:center;
+    overflow: clip;
+    display: grid;  
+    place-content: center;
+    /* background-color: red; */
+    box-shadow: none;
+    width: 100%;
+    height: 100%;
+    /* border: 3px solid black; */
+} 

@@ -17,7 +17,7 @@ function resize(){
 function drawCanvas(){
     c.clearRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < drawnScreenShapes.length; i++){
-        drawnScreenShapes[i].draw();
+        drawShape(drawnScreenShapes[i])
         drawnScreenShapes[i].drawarrows();
     }
 }

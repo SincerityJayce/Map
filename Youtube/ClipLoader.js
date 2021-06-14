@@ -3,7 +3,7 @@ const ytPaste = document.getElementById('YoutubeClipLoad');
 
 ytPaste.addEventListener('paste', function(e){
     e.preventDefault();
-    
+    ytPaste.value = "";
     buildYTToolImage(e.clipboardData.getData('text'));
 })
 

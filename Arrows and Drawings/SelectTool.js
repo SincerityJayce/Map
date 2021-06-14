@@ -59,6 +59,7 @@ function selectActiveTool(event){
         activeTool.classList.add('selectedTool');
         addDisplayToDOM();
         turnTheCanvasCursorInvisible();
+        doOneThing()
         unstyleAllUnactiveTools();
         createTheoreticalShape();
     } else {

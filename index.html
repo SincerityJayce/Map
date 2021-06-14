@@ -12,6 +12,12 @@
         <style type='text/css'>
         
         </style>    
+
+        <div id='shapemMenuDiv'>
+            <ul id='menuList'>
+            </ul>
+        </div>
+
     </head>
     <body>
         <section class='wrapper' id='container'>
@@ -24,7 +30,7 @@
                 <!-- <button id='zoom+' class='zoom'>+</button>
                 <button id='zoom-' class='zoom'>-</button> -->
                 <li>
-                    <a href='#' class='local-btn'>Local Images
+                    <a href='#' class='local-btn'>Load File
                         <i class="fa fa-caret-down first"></i>
                     </a>
                     <ul id="storedImages" class='local-show'>
@@ -32,6 +38,7 @@
                         type='text'
                         name='mapload'
                         id='loadmap'
+                        autocomplete="off"
                         onpaste="onPasteMapLink(event)"
                         placeholder="Paste map info here..."/>
                     </ul>
@@ -41,13 +48,12 @@
                         <i class="fa fa-caret-down second"></i>
                     </a>
                     <ul id="YTClips" class='youtube-show'>
-                        <li>
-                            <input 
-                            type='text'
-                            name='YoutubeClipLoad'
-                            id='YoutubeClipLoad'
-                            placeholder="Paste a youtube link here..."/>
-                        </li>
+                        <input 
+                        autocomplete="off"
+                        type='text'
+                        name='YoutubeClipLoad'
+                        id='YoutubeClipLoad'
+                        placeholder="Paste a youtube link here..."/>
                     </ul>
                 </li>
                 <li id='textBoxes-Tab' >
@@ -70,9 +76,10 @@
                         <input 
                             type='text'
                             name='ffdeckload'
+                            autocomplete="off"
                             id='ffdeckload'
                             onpaste="onPasteDeckLink(event)"
-                            placeholder="Paste link to deck here..."/>
+                            placeholder="Paste ffdecks.com/deck link..."/>
                     </ul>
                 </li>
 
@@ -81,13 +88,7 @@
         </nav>
 
 
-        <div id='shapemMenuDiv'>
-            <ul id='shapeMenu'>
-                <li><a>First</a></li>
-                <li><a>Second</a></li>
-                <li><a>Third</a></li>
-            </ul>
-        </div>
+
 
 
 
@@ -120,6 +121,7 @@
 
 
 
+        <script src='datahandling\Querys.js'></script>
         <script src='math\XY Converters.js'></script>
         <script src='Arrows and Drawings\Object Definitions.js'></script>
         <script src='Arrows and Drawings\SelectTool.js'></script>
@@ -134,9 +136,13 @@
         <script src='datahandling\ffdecksRequest.js'></script>
         
         <script src='Youtube\ClipLoader.js'></script>
+        <script src='Youtube\VidLogic.js'></script>
         <script src='datahandling\rightClickMenu.js'></script>
         <script src='textboxes.js'></script>
-        <!-- <script src='VideoObject.js'></script> -->
+        
+        <script src='Arrows and Drawings\TheDrawFunction.js'></script>
+        
+        <script src='datahandling\doOneThing.js'></script>
         <script src='datahandling\Screenload.js'></script>
     </body>
 </html>

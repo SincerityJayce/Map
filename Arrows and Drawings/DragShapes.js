@@ -19,4 +19,11 @@ function redrawShapeBeingDragged(){
 window.addEventListener('mouseup',
     function(e){
         shapeBeingDragged = undefined;   
-    })
+    }
+)
+
+function startDraggingShape(thisShape){
+    thisShape.draggedfrom = {x:thisShape.x, y:thisShape.y};
+    mouseStarteDraggingFrom = {x:mouseOnCanvas.x, y:mouseOnCanvas.y}
+    shapeBeingDragged = thisShape;
+}

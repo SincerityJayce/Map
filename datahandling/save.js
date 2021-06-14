@@ -31,11 +31,17 @@ function createJSON(){
 }
 function makeSaveableObj(shape){
 
-    let object = {  id:shape.id, x: shape.x, y:shape.y, 
-                    src:shape.src, w:shape.w, h:shape.h, 
-                    selfScale: shape.selfScale,
-                    arrows:makeArrowsSaveable(shape.arrows),
-                    text:getTextFrom(shape)};
+    let object = {  
+        id:shape.id, x: shape.x, y:shape.y, 
+        src:shape.src, w:shape.w, h:shape.h,
+
+        selfScale: shape.selfScale,
+        arrows:makeArrowsSaveable(shape.arrows),
+        text:getTextFrom(shape), 
+        videoStart:shape.videoStart,
+        videoFinish:shape.videoFinish, 
+        textboxBackgroundColor:shape.textboxBackgroundColor
+    }
 
     return object;
     }
@@ -71,25 +77,34 @@ function getTextFrom(shape){
 
 function onPasteMapLink(e){
     e.preventDefault();
+    document.getElementById('loadmap').value = "";
     savefile = JSON.parse(e.clipboardData.getData('text'));
     generateObjects(savefile);
 }
+var importedShapes =  [];
 function generateObjects(savefile){
+    importedShapes =  []
     for(var i in savefile){
         let o = savefile[i];
-        importedShape = (new BasicShape(o.src, o.x, o.y, o.w, o.h, o.arrows, o.selfScale, o.id));
+        importedShape = (new BasicShape(o));
         importedShape.identify();
-        importedShape.onDraw();
-        importedShape.draw();
+        importedShape.onFirstDraw();
+        drawShape(importedShape)
         loadTextBox(importedShape, o.text);
 
         drawnScreenShapes.push(importedShape);
+
+        importedShapes.push(importedShape);
     }
-    for(var i in drawnScreenShapes){
-        console.log(drawnScreenShapes[i], 'making arrows')
-        initialiseObjectsArrows(drawnScreenShapes[i]);
+    for(var i in importedShapes){
+        initialiseObjectsArrows(importedShapes[i]);
     }
 }
+
+
+
+
+
 
 function loadTextBox(box, txt){
     if(box.textBox){
@@ -107,7 +122,7 @@ function initialiseObjectsArrows(shape){
             arrowObj = shape;
             targetsOldID = shape.arrowcodes[i];
             targetsNewID=idKeys[targetsOldID]
-            FoundShape(targetsNewID).shapeDiv.dispatchEvent(new Event('mouseup'));
+            FoundShape(targetsNewID).clickDiv.dispatchEvent(new Event('mouseup'));
             iAmDrawingAnArrowNow = false;
         }
     }

@@ -49,7 +49,14 @@ function setMouseXY(event){
 function createTheoreticalShape(){
     console.log('theorising')
     let [x, y] = convertCanvasXYintoFileXY(mouseOnCanvas.canvasX, mouseOnCanvas.canvasY);
-    theoreticalShape = new BasicShape(activeTool.src, x, y,activeTool.naturalWidth ,activeTool.naturalHeight,[]);
+
+    let theory = {
+        src: activeTool.src,
+        x,
+        y
+    }
+
+    theoreticalShape = new BasicShape(theory);
     theoreticalShape.identify();
     console.log(theoreticalShape);
 }
@@ -77,8 +84,8 @@ function drawTheoreticalShapeOnMouseMove(event){
 // Paint and unselect the tool
 function drawTheoreticalShapeOnClick(event){
     [theoreticalShape.x, theoreticalShape.y] = convertCanvasXYintoFileXY(mouseOnCanvas.canvasX, mouseOnCanvas.canvasY);
-    theoreticalShape.onDraw();
-    theoreticalShape.draw();
+    theoreticalShape.onFirstDraw();
+    drawShape(theoreticalShape)
     drawnScreenShapes.push(theoreticalShape);
     unselectAllTools();
 }

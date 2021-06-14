@@ -5,6 +5,8 @@ var arrowStart;
 var allCreatedObjects = [];
 var shapeBeingDragged;
 var mouseStarteDraggingFrom;
+var textBoxBeingEdited;
+var shapeBeingResized;
 
 function createUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -21,40 +23,56 @@ function createShapeId(){
 /////////////////////////////////////////////////////////////
 // ! Canvas Shapes
 
-
-function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
+var lastShape;
+function BasicShape(model){
     var thisShape = this;
-    this.src = shape
-    this.id = id;
-    this.src = shape;
-    this.selfScale = selfScale;
-    this.x = x;
-    this.y = y;
+
+    lastShape = this;
+    this.src = model.src;
+    this.id = model.id;
+    this.selfScale= 1;if(model.selfScale){this.selfScale = model.selfScale};
+    this.x = model.x;
+    this.y = model.y;
+    this.shapeFunctions = {};
 
     this.alive = true;
-    this.imageOn = true;
 
-    // addRightClickMenuTo(this);
+    this.imageOn = true;
+    this.textBoxOn = false;
 
 
     this.shapeDiv = initialiseShapeDiv();
-    this.shape =makeShape(shape);
+    this.clickDiv = initialiseClickDiv();
+    this.shapeDiv.appendChild(this.clickDiv);
+    this.shape =makeShape(model.src);
+
     this.text;
+    this.fontSize = 18;
 
-    // this.shape.src = this.src;
+    //make this WH logic apply after creation
+    if(model.w){this.w = model.w}else{this.w = this.shape.naturalWidth;}
+    if(model.h){this.h = model.h}else{this.h = this.shape.naturalHeight;}
 
-    this.w = this.shape.naturalWidth;
-    this.h = this.shape.naturalHeight;
-    this.width = this.shape.width*selfScale;
-    this.height = this.shape.height*selfScale;
-    this.shapeDiv.appendChild(this.shape);
+    this.width = this.w*this.selfScale;
+    this.height = this.h*this.selfScale;
+
+    this.draggedfrom = {x:undefined, y:undefined};
+
+    this.videoStart = 0; if(model.videoStart){this.videoStart=model.videoStart}
+    this.videoFinish = 60;if(model.videoFinish){this.videoFinish=model.videoFinish}
+
+
+    //fake a function that initialises shapeloda and clickdiv functions
+    this.clickDiv.appendChild(this.shape);
+
     this.shape.addEventListener('load', function(){
-        thisShape.draw();
+        if(thisShape.w==false){thisShape.w = thisShape.shape?.naturalWidth;}
+        if(thisShape.h==false){thisShape.h = thisShape.shape?.naturalHeight;}
+        drawShape(thisShape);
     })
 
-
-
-    this.shapeDiv.addEventListener('contextmenu', function (e){
+    this.clickDiv.addEventListener('contextmenu', function(e){
+        thisShape.shapeDiv.classList.add('contextShape')
         contextShape = thisShape;
         openShapeMenu(e)});
 
@@ -63,52 +81,66 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
 
 
 
-    this.onDraw = function(){
-        console.log(thisShape.src)
-        if (thisShape.src.includes('images/box.png')){
-            thisShape.textBox = document.createElement('div');
-            let s = thisShape.textBox;
-            s.setAttribute('contenteditable', 'true');
-            s.innerHTML = ""
-            s.classList.add('textbox');
-            thisShape.shapeDiv.appendChild(s);
-            thisShape.imageOn = false;
-        }
+    this.onFirstDraw = function(){
+        InitShapeFunctions(thisShape)
     }
 
 
-    // dragging and arrows
-    this.draggedfrom = {x:undefined, y:undefined};
+    this.editTextBox = function(){
+        startEditingTextBox(thisShape.textBox);
+    }
 
-    this.shapeDiv.addEventListener('mousedown', 
-    function(event){
-        if (event.shiftKey){
-            startArrow(thisShape);
-        } else {
-            thisShape.draggedfrom = {x:thisShape.x, y:thisShape.y};
-            mouseStarteDraggingFrom = {x:mouseOnCanvas.x, y:mouseOnCanvas.y}
-            shapeBeingDragged = thisShape;
+    this.InitialiseTextBox = function(){
+        if(this.textBox ==undefined){
+            
+            makeTextboxFor(thisShape);
+            thisShape.imageOn = false;
         }
-    })
-    this.shape.addEventListener('mousedown', 
+        thisShape.ShowTextBox()
+    }
+
+
+    this.ShowTextBox= function(){
+        thisShape.shapeFunctions["textbox"] = true;
+        thisShape.clickDiv.appendChild(this.textBox);
+        makeShapeResiazble(thisShape);
+    }
+
+
+
+    this.HideTextBox = function(){
+        thisShape.shapeFunctions["textbox"] = false;
+        thisShape.textBox.remove();
+        makeShapeNotResiazble(thisShape);
+    }
+    
+
+
+    // dragging and arrows
+    
+
+    this.clickDiv.addEventListener('mousedown', 
     function(event){
-        if (event.shiftKey){
-            startArrow(thisShape);
-        } else {
-            thisShape.draggedfrom = {x:thisShape.x, y:thisShape.y};
-            mouseStarteDraggingFrom = {x:mouseOnCanvas.x, y:mouseOnCanvas.y}
-            shapeBeingDragged = thisShape;
+        if(event.button ==0){
+            if (event.shiftKey){
+                startArrow(thisShape);
+            }
+            else{if(thisTextBoxIsntBeingEdited(thisShape)){
+                startDraggingShape(thisShape)
+            }}
         }
+
     })
+
 
 
     this.scaleUp = function(){
-        this.selfScale*= 0.75;
+        this.selfScale*= 0.90;
         this.width = this.w*this.selfScale;
         this.height = this.h*this.selfScale;
     }
     this.scaleDown = function(){
-        this.selfScale/= 0.75;
+        this.selfScale/= 0.90;
         this.width = this.w*this.selfScale;
         this.height = this.h*this.selfScale;
     }
@@ -127,81 +159,9 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
     this.divStyleMath;
     this.aspect;
     //Draws image onto canvas
-    this.draw = function(){
-        this.width = this.shape.naturalWidth*this.selfScale;
-        this.height = this.shape.naturalHeight*this.selfScale;
-        let [x, y] = convertFileXYintoCanvasXY(this.x, this.y);
-        let [w, h] = convertFileWHintoCanvasWH(this.width, this.height);
-        // //uncomment this to draw onto canvas
-        // c.drawImage(shape, x, y, w, h);
-
-        this.divStyleMath={
-            left:(x-w/2)/scale,
-            top : ((y-h/2)/scale),
-            maxW :((canvasAreaW-x+w/2)/scale),
-            maxH : ((canvasAreaH-y+h/2)/scale)
-        }
-        let d = this.divStyleMath;
-        this.shapeDiv.style = ( 
-            'left:'+d.left+
-            ';top:'+d.top+
-            ';position: fixed'+
-            ';overflow:hidden;');
-            
-        this.textBox?.style.fontSize
-        this.aspect = this.shape.naturalWidth/this.shape.naturalHeight;
-        this.shape.height = this.height/ totalScale; // JUST BY CHANGING THIS TO SCALE RATHER THAN TOTAL SCA LE, YOU GET COOL EFFECT
-        this.shape.width = this.shape.height*this.aspect;
-
-
-        if(ask_isTheShapeInitialisingOnscreen(this, x-w/2, y-h/2)){
-
-            if(thisShape== contextShape){
-                formatRightClickMenu();
-            }
-
-            if (thisShape.imageOn){
-                this.shapeDiv.appendChild(this.shape);
-            }else{this.shape.remove();}
-
-
-            if(thisShape.vidPlayer){
-                if((this.vidDiv?.parentNode ==this.shapeDiv)==false){
-                    this.shapeDiv.appendChild(this.vidDiv)
-                }
-
-                let v = this.vidPlayer.getIframe()
-                v.height=this.shape.height;
-                v.width=this.shape.width;
-            }
-
-            if(thisShape.textBox){
-                let t = this.textBox;
-                if((t.parentNode ==this.shapeDiv)==false){
-                    this.shapeDiv.appendChild(t)
-                }
-                t.style="height:" + this.shape.height + "; width:" + this.shape.width+";"
-            }
-
-
-
-
-
-        }else{
-            this.shape.remove();
-            this.vidDiv?.remove();
-            this.textBox?.remove();
-        }
-            
-
-
-        
-    }
-
 
     this.drawarrows = function(){
         for(var i = 0; i < thisShape.arrows.length; i++){
-            console.log('drawing this arrow', thisShape.arrows[i])
             thisShape.arrows[i].draw();
         }
     
@@ -218,10 +178,10 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
 
 
     // connections (arrows)
-    this.arrowcodes = arrows
+    this.arrowcodes = []; if(model.arrows){this.arrowcodes=model.arrows}
     this.arrows = [];
 
-    this.shapeDiv.addEventListener('mouseup',
+    this.clickDiv.addEventListener('mouseup',
     function(e){if(iAmDrawingAnArrowNow){
                 thisShape.recieveArrow();
                 resize(); }})
@@ -248,6 +208,7 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
         thisShape.shape.remove();
         thisShape.alive = false;
         thisShape.shapeDiv.remove()
+        playerIsNotPlaying(thisShape);
         delete thisShape.shape;
         delete thisShape.shapeDiv;
         delete thisShape;
@@ -258,16 +219,14 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
         idKeys[thisShape.id] = newID
         thisShape.id = newID;
         thisShape.shapeDiv.id = thisShape.id;
+        thisShape.clickDiv.id = thisShape.id;
         thisShape.shape.id = thisShape.id;
     }
 
 
 
+    determineAndSetupYoutubeFor(this);
 
-    this.videoStart = 30;
-    this.videoEnd = 40;
-    this.YTid = determineYouTubeID(shape)?.[0].replace("img.youtube.com/vi/", "");
-    this.vidPlayer;
 
 
 
@@ -275,19 +234,18 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
     this.shape.addEventListener('click',
         function(){
             console.log('clickevent', thisShape.shape.YTid)
-            if(thisShape.YTid){
+            if(thisShape.shapeFunctions["video"]){
                 thisShape.createVideo();
             }
         })
     this.createVideo = function(){
+        
         thisShape.vidDiv = document.createElement('div');
-        thisShape.vidDiv.height= this.shape.height;
-        thisShape.vidDiv.width = this.shape.width;
+        thisShape.vidDiv.height= thisShape.shape.height;
+        thisShape.vidDiv.width = thisShape.shape.width;
         thisShape.vidDiv.id = thisShape.id+"YTAPI";
-        thisShape.shapeDiv.appendChild(thisShape.vidDiv);
-        thisShape.shape.remove();
-        console.log(thisShape.YTid[0][-11])
-        thisShape.imageOn = false;
+        thisShape.clickDiv.appendChild(thisShape.vidDiv);
+
         let newPlayer = new YT.Player(thisShape.vidDiv.id,{
             height: thisShape.shape.height,
             width: thisShape.shape.width,
@@ -298,54 +256,61 @@ function BasicShape(shape, x, y, w, h, arrows, selfScale = 1, id){
                 modestbranding:1,
                 rel:0,
                 start: thisShape.videoStart,
-                end: thisShape.videoEnd
+                end: thisShape.videoFinish+2
             },
             events: {
-            //   'onReady': thisShape.addListeners
+                "onReady": thisShape.videoReady,
+            //   'onReady': thisShape.addListeners,
+            "onStateChange":thisShape.togglePlayStatus
             }});
         thisShape.vidPlayer = newPlayer;
         thisShape.vidDiv = thisShape.vidPlayer.getIframe();
         thisShape.vidDiv.classList.add('pointerEventsNone');
+        thisShape.clickDiv.addEventListener('click', function(){
+            if(thisClickWasFast()){
+                if(thisTextBoxIsntBeingEdited(thisShape)){
+                    playPauseToggle(thisShape)
+                }
+            }})
+
+
+        // slider code
+        thisShape.slider = makeSlider();
+        thisShape.slider.addEventListener('input', thisShape.setVideoPosition);
+        thisShape.slider.addEventListener('mousedown', function(){
+            activeSlider = thisShape
+        });
+        thisShape.shapeDiv.appendChild(thisShape.slider);
     }
 
+    this.videoReady = function(){
+        thisShape.videoFinish = thisShape.vidPlayer.getDuration();
+        thisShape.shape.remove();
+        thisShape.imageOn = false;
+    }
+
+    
+    this.togglePlayStatus=function(){
+        let statePorP = {
+            0 : playerIsNotPlaying,
+            1 : playerIsPlaying,
+            2 : playerIsNotPlaying,
+            3 : playerIsNotPlaying,
+            5 : playerIsNotPlaying}
+        statePorP[thisShape.vidPlayer.getPlayerState()](thisShape);
+    }
     
 
 
 
+    this.textboxBackgroundColor = "#20202088"; if(model.textboxBackgroundColor){this.textboxBackgroundColor = model.textboxBackgroundColor};
+    this.textThumbnail = false;
 
+    this.setVideoPosition = function setVideoPosition(){
+        thisShape.vidPlayer.seekTo(findVideoPositionFromSlideValue(thisShape, thisShape.slider), allowSeekAhead_YoutubeAPI)
+        playOrPause(thisShape);
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // this.notes = document.createElement('div')
-    // this.notes.innerHTML = "Testing";
-    // this.notes.setAttribute("contenteditable", "true");
-    // this.shapeDiv.appendChild(this.notes);   
     allCreatedObjects.push(this);
 }
 
@@ -368,6 +333,14 @@ function initialiseShapeDiv(){
     let sd = document.createElement('div')
     sd.classList.add('drawnshape');
     container.appendChild(sd);
+    sd.style.position = 'fixed';
+    sd.style.overflow = 'hidden';
+    return sd
+}
+
+function initialiseClickDiv(){
+    let sd = document.createElement('div')
+    sd.classList.add('clickdiv');
     return sd
 }
 
@@ -382,16 +355,6 @@ function initialiseShapeDiv(){
 
 
 
-function ask_isTheShapeInitialisingOnscreen(object, x, y){
-    let xn = (x/scale + object.width);
-    let yn = (y/scale + object.height);
-    x = x/scale;
-    y = y/scale;
-    if (xn > 0 && x < window.innerWidth &&
-        yn > 0 && y < window.innerHeight){
-        return true;
-    } else {return false;}
-}
 
 
 
@@ -401,27 +364,10 @@ function ask_isTheShapeInitialisingOnscreen(object, x, y){
 
 
 
-function findShapeFromId(id){
-    let o = undefined;
-    for (var i=0; i<drawnScreenShapes.length;i+=1){
-        if (id == drawnScreenShapes[i].id){
-            o = drawnScreenShapes[i];
-            console.log(o, 'shape from id');
-        }
-    }
-return o
-}
 
-function FoundShape(id){
-    let o = undefined;
-    for (var i=0; i<drawnScreenShapes.length;i+=1){
-        if (id == drawnScreenShapes[i].id){
-            o = drawnScreenShapes[i];
-            console.log(o, 'shape from id');
-        }
-    }
-    return o;
-}
+
+
+
 
 
 
@@ -454,8 +400,105 @@ function deleteDrawnShape(shape){
     drawCanvas();
 }
 
-function determineYouTubeID(link) {
-    let f = (link.match(/img.youtube.com\/vi\/[\w\-]{11}/))
-    console.log(f);
-    return f
-  }
+
+
+
+function  startEditingTextBox(s){
+    textBoxBeingEdited = s;
+    textBoxBeingEdited.setAttribute('contenteditable', true);
+    selectElementContents(textBoxBeingEdited);
+}
+
+function selectElementContents(el) {
+    let range = document.createRange();
+    range.selectNodeContents(el);
+    let sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
+
+
+window.addEventListener('mousemove',function(e){
+    this.requestAnimationFrame(resizeAShape)})
+
+function resizeAShape(){
+    if(shapeBeingResized){
+        shapeBeingResized.w = shapeBeingResized.shapeDiv?.offsetWidth/shapeBeingResized.selfScale*totalScale;
+        shapeBeingResized.h = shapeBeingResized.shapeDiv?.offsetHeight/shapeBeingResized.selfScale*totalScale;
+        drawShape(shapeBeingResized);
+    }}
+
+function thisTextBoxIsntBeingEdited(thisShape){
+    if(textBoxBeingEdited!== thisShape.textBox || textBoxBeingEdited ==undefined){
+        return true
+    }else{return false}
+}
+
+
+
+
+
+
+// new stuff
+function InitShapeFunctions(thisShape){
+
+    if(thisShape.src.includes('images/box.png')){
+        thisShape.shapeFunctions['textbox'] = true;
+    }//placeholder, move to something more sensible
+
+    if (thisShape.shapeFunctions['textbox']){
+        thisShape.InitialiseTextBox(); 
+    }
+}
+
+function makeShapeResiazble(thisShape){
+    thisShape.shapeDiv.classList.add('resizable');
+
+    thisShape.shapeDiv.addEventListener('mouseup',function(e){
+        thisShape.w = thisShape.shapeDiv.offsetWidth/thisShape.selfScale*totalScale;
+        thisShape.h = thisShape.shapeDiv.offsetHeight/thisShape.selfScale*totalScale;
+        shapeBeingResized = undefined;
+    })
+
+    thisShape.shapeDiv.addEventListener('mousedown',function(e){
+        shapeBeingResized = thisShape;
+    })
+}
+function makeShapeNotResiazble(thisShape){
+    thisShape.shapeDiv.classList.remove('resizable');
+
+    thisShape.shapeDiv.removeEventListener('mouseup',function(e){
+        thisShape.w = thisShape.shapeDiv.offsetWidth/thisShape.selfScale*totalScale;
+        thisShape.h = thisShape.shapeDiv.offsetHeight/thisShape.selfScale*totalScale;
+        shapeBeingResized = undefined;
+    })
+
+    thisShape.shapeDiv.removeEventListener('mousedown',function(e){
+        shapeBeingResized = thisShape;
+    })
+}
+
+
+function makeTextboxFor(thisShape){
+    function makeTextbox(){
+        let tb = document.createElement('div');
+        tb.type='text'
+        tb.innerHTML = "DoubleClick to add text."
+        tb.classList.add('textbox');
+        tb.style.background = thisShape.textboxBackgroundColor
+        return tb
+    }
+
+    thisShape.textBox = makeTextbox();
+    thisShape.textBox.addEventListener("dblclick", thisShape.editTextBox);
+}
+
+
+function determineAndSetupYoutubeFor(thisShape){
+    thisShape.YTid = determineYouTubeID(thisShape.src)?.[0].replace("img.youtube.com/vi/", "");
+    if(thisShape.YTid){
+        thisShape.shapeFunctions["video"] = true;
+    }
+}
+
