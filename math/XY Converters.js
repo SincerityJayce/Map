@@ -30,3 +30,38 @@ function convertFileWHintoScreenWH(w, h){
     [w, h] = [w*scale, h*scale];
     return [w, h]
 }
+
+
+function convertSecondsToMinSecString(time){
+    if(time){
+        var minutes = Math.floor(time / 60);
+        var seconds = time - minutes * 60;
+    
+        function str_pad_left(string,pad,length) {
+            return (new Array(length+1).join(pad)+string).slice(-length);}
+
+        let finalTime = minutes+':'+str_pad_left(seconds,'0',2);
+        return finalTime;
+
+    }else{
+        return "min:sec"
+    }
+}
+
+function convertMinSecStringToSeconds(string){
+    if(string.match(/[0-9]+[:]?[0-9]{0,2}/)){
+        let min=0;
+        let sec = parseInt(string);
+        if(string.includes(":")){
+            [min, sec] = string.split(":");
+            min = parseInt(min);
+            sec = parseInt(sec);
+        }
+        
+        sec = (min*60)+sec;
+
+        return sec
+    } else{
+        return 0
+    }
+}

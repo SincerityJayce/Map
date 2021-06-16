@@ -36,7 +36,7 @@ function BasicShape(model){
     this.shapeFunctions = {};
 
     this.alive = true;
-
+    this.neverDrawn = true;
     this.imageOn = true;
     this.textBoxOn = false;
 
@@ -82,6 +82,7 @@ function BasicShape(model){
 
 
     this.onFirstDraw = function(){
+        container.appendChild(this.shapeDiv);
         InitShapeFunctions(thisShape)
     }
 
@@ -94,7 +95,10 @@ function BasicShape(model){
         if(this.textBox ==undefined){
             
             makeTextboxFor(thisShape);
-            thisShape.imageOn = false;
+            if(thisShape.shapeFunctions['video']==false){
+                thisShape.imageOn = false;
+            }
+            
         }
         thisShape.ShowTextBox()
     }
@@ -230,19 +234,19 @@ function BasicShape(model){
 
 
 
-
-    this.shape.addEventListener('click',
-        function(){
-            console.log('clickevent', thisShape.shape.YTid)
-            if(thisShape.shapeFunctions["video"]){
-                thisShape.createVideo();
-            }
-        })
+    function initVideo(){
+        if(thisShape.shapeFunctions["video"] && purposeOfClick.isToOperate()){
+            thisShape.clickDiv.removeEventListener('click',initVideo)
+            thisShape.createVideo();
+        }
+    }
+    this.clickDiv.addEventListener('click',initVideo)
+            
     this.createVideo = function(){
         
         thisShape.vidDiv = document.createElement('div');
-        thisShape.vidDiv.height= thisShape.shape.height;
-        thisShape.vidDiv.width = thisShape.shape.width;
+        thisShape.vidDiv.height= "100%";
+        thisShape.vidDiv.width = "100%";
         thisShape.vidDiv.id = thisShape.id+"YTAPI";
         thisShape.clickDiv.appendChild(thisShape.vidDiv);
 
@@ -265,9 +269,11 @@ function BasicShape(model){
             }});
         thisShape.vidPlayer = newPlayer;
         thisShape.vidDiv = thisShape.vidPlayer.getIframe();
+        thisShape.vidDiv.height= "100%";
+        thisShape.vidDiv.width = "100%";
         thisShape.vidDiv.classList.add('pointerEventsNone');
         thisShape.clickDiv.addEventListener('click', function(){
-            if(thisClickWasFast()){
+            if(purposeOfClick.isToOperate()){
                 if(thisTextBoxIsntBeingEdited(thisShape)){
                     playPauseToggle(thisShape)
                 }
@@ -315,6 +321,19 @@ function BasicShape(model){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 function makeShape(src){
     return styleShape(new Image(), src)
 }
@@ -325,6 +344,8 @@ function styleShape(shape, src){
     shape.draggable = false;
     shape.classList.add('drawnshape');
     shape.classList.add('FFDecks');
+    shape.style.width ="100%";
+    shape.style.height ="100%";
 
     return shape
 }
@@ -332,7 +353,6 @@ function styleShape(shape, src){
 function initialiseShapeDiv(){
     let sd = document.createElement('div')
     sd.classList.add('drawnshape');
-    container.appendChild(sd);
     sd.style.position = 'fixed';
     sd.style.overflow = 'hidden';
     return sd
@@ -341,39 +361,10 @@ function initialiseShapeDiv(){
 function initialiseClickDiv(){
     let sd = document.createElement('div')
     sd.classList.add('clickdiv');
+    // sd.style.width = "100%";
+    // sd.style.height = "100%";
     return sd
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const bin = document.getElementById('bin');
@@ -403,41 +394,11 @@ function deleteDrawnShape(shape){
 
 
 
-function  startEditingTextBox(s){
-    textBoxBeingEdited = s;
-    textBoxBeingEdited.setAttribute('contenteditable', true);
-    selectElementContents(textBoxBeingEdited);
-}
-
-function selectElementContents(el) {
-    let range = document.createRange();
-    range.selectNodeContents(el);
-    let sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-}
-
-
-
-window.addEventListener('mousemove',function(e){
-    this.requestAnimationFrame(resizeAShape)})
-
-function resizeAShape(){
-    if(shapeBeingResized){
-        shapeBeingResized.w = shapeBeingResized.shapeDiv?.offsetWidth/shapeBeingResized.selfScale*totalScale;
-        shapeBeingResized.h = shapeBeingResized.shapeDiv?.offsetHeight/shapeBeingResized.selfScale*totalScale;
-        drawShape(shapeBeingResized);
-    }}
-
-function thisTextBoxIsntBeingEdited(thisShape){
-    if(textBoxBeingEdited!== thisShape.textBox || textBoxBeingEdited ==undefined){
-        return true
-    }else{return false}
-}
 
 
 
 
+    
 
 
 // new stuff
@@ -445,6 +406,7 @@ function InitShapeFunctions(thisShape){
 
     if(thisShape.src.includes('images/box.png')){
         thisShape.shapeFunctions['textbox'] = true;
+        thisShape.imageOn = false;
     }//placeholder, move to something more sensible
 
     if (thisShape.shapeFunctions['textbox']){
@@ -452,53 +414,5 @@ function InitShapeFunctions(thisShape){
     }
 }
 
-function makeShapeResiazble(thisShape){
-    thisShape.shapeDiv.classList.add('resizable');
 
-    thisShape.shapeDiv.addEventListener('mouseup',function(e){
-        thisShape.w = thisShape.shapeDiv.offsetWidth/thisShape.selfScale*totalScale;
-        thisShape.h = thisShape.shapeDiv.offsetHeight/thisShape.selfScale*totalScale;
-        shapeBeingResized = undefined;
-    })
-
-    thisShape.shapeDiv.addEventListener('mousedown',function(e){
-        shapeBeingResized = thisShape;
-    })
-}
-function makeShapeNotResiazble(thisShape){
-    thisShape.shapeDiv.classList.remove('resizable');
-
-    thisShape.shapeDiv.removeEventListener('mouseup',function(e){
-        thisShape.w = thisShape.shapeDiv.offsetWidth/thisShape.selfScale*totalScale;
-        thisShape.h = thisShape.shapeDiv.offsetHeight/thisShape.selfScale*totalScale;
-        shapeBeingResized = undefined;
-    })
-
-    thisShape.shapeDiv.removeEventListener('mousedown',function(e){
-        shapeBeingResized = thisShape;
-    })
-}
-
-
-function makeTextboxFor(thisShape){
-    function makeTextbox(){
-        let tb = document.createElement('div');
-        tb.type='text'
-        tb.innerHTML = "DoubleClick to add text."
-        tb.classList.add('textbox');
-        tb.style.background = thisShape.textboxBackgroundColor
-        return tb
-    }
-
-    thisShape.textBox = makeTextbox();
-    thisShape.textBox.addEventListener("dblclick", thisShape.editTextBox);
-}
-
-
-function determineAndSetupYoutubeFor(thisShape){
-    thisShape.YTid = determineYouTubeID(thisShape.src)?.[0].replace("img.youtube.com/vi/", "");
-    if(thisShape.YTid){
-        thisShape.shapeFunctions["video"] = true;
-    }
-}
 

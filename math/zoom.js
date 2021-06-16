@@ -1,5 +1,8 @@
 window.addEventListener('wheel', scaleObjectWithWheel);
 
+const arbitraryZoomRatio = 0.9;
+const zoomDrift = 2/(1-arbitraryZoomRatio);
+
 function scaleObjectWithWheel(e){
     let s;
     if(shapeBeingDragged){
@@ -15,7 +18,7 @@ function scaleObjectWithWheel(e){
         s.scaleDown();
     }
     if(shapeBeingDragged){
-        s.draw()
+        drawShape(s)
     }
     if(theoreticalShape){
         requestAnimationFrame(updateMouseDisplay)
@@ -47,10 +50,10 @@ function zoomCanvas(e){
 }
 
 function zoomIn(){
-    viewScale *= 0.75;
+    viewScale *= arbitraryZoomRatio;
     totalScale = scale * viewScale;
-    canvasDrift.x += (canvasAreaW/8*viewScale);
-    canvasDrift.y += (canvasAreaH/8*viewScale);
+    canvasDrift.x += (canvasAreaW/zoomDrift*viewScale);
+    canvasDrift.y += (canvasAreaH/zoomDrift*viewScale);
     draggedFrom.canvasX = mouseOnCanvas.canvasX;
     draggedFrom.canvasY = mouseOnCanvas.canvasY;
     draggedFrom.driftX = canvasDrift.x;
@@ -60,10 +63,14 @@ function zoomIn(){
 
     resize();
 }
+
+
+
+
 function zoomOut(){
-    canvasDrift.x -= canvasAreaW/8*viewScale;
-    canvasDrift.y -= canvasAreaH/8*viewScale;
-    viewScale /= 0.75;
+    canvasDrift.x -= canvasAreaW/zoomDrift*viewScale;
+    canvasDrift.y -= canvasAreaH/zoomDrift*viewScale;
+    viewScale /= arbitraryZoomRatio;
     totalScale = scale * viewScale;
     draggedFrom.canvasX = mouseOnCanvas.canvasX;
     draggedFrom.canvasY = mouseOnCanvas.canvasY;

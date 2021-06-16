@@ -196,22 +196,23 @@ nav ul li a i.rotate{
     bottom:  0px;
     padding-bottom: 22px;
     padding: 25px;
+    color: #20202080;
 }
 .bin:hover{
     border-radius: 50%;
-    color: red;
+    /* color: red; */
     box-shadow: red 0px 0px 30px, inset red 0px 0px 30px;
 }
 
 .save-btn{
-    font-weight: 600;
+    font-weight: 300;
     color: black;
     position: absolute;
     right: 0px;
     top:  0px;
     padding-top: 22px;
     padding: 25px;
-    color: white;
+    color: #20202079
 }
 
 .save-btn:hover{
@@ -459,3 +460,8 @@ div.resizable div, div.resizable div div{
     height: 100%;
     /* border: 3px solid black; */
 } 
+
+.fullscreenShapeMenu{
+    width: 100%;
+    top:0;
+}

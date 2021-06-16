@@ -48,7 +48,7 @@ function playerIsPlaying(thisShape){
 
 
 function updateVideos(){
-
+    console.log(window.fullScreen)
     function updateThisVidPlayer(thisShape){
         console.log(thisShape.vidPlayer.getCurrentTime(),thisShape.videoFinish)
         if(thisShape.vidPlayer.getCurrentTime()>thisShape.videoFinish){

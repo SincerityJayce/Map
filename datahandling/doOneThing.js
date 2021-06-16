@@ -36,14 +36,25 @@ function removeObjectFromList(obj, list){
         if(list[i] == obj){
             list.splice(i, 1);}}}
 
-window.addEventListener('mousedown', clickStartTime);
-var clickstarted;
-function clickStartTime(){
-    clickstarted = new Date();
-}
-function thisClickWasFast(){
-    let now = new Date();
-    if(now-clickstarted < 300){
-        return true
+
+
+
+
+function checkIfClickWasIntededToAlterObjectOrOperateIt(){
+    let checker = this;
+    this.clickstarted;
+    this.objectUnmoved;
+    this.startAssessing = function(){
+        objectUnmoved = true;
+        clickstarted = new Date();
     }
-}
+
+    this.isToOperate = function thisClickWasFast(){
+        let now = new Date();
+        if(now-clickstarted < 300 && objectUnmoved){
+            return true
+        }
+    }
+    window.addEventListener('mousedown', checker.startAssessing);
+} 
+const purposeOfClick = new checkIfClickWasIntededToAlterObjectOrOperateIt();

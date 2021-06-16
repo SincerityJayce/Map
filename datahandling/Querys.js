@@ -22,7 +22,8 @@ function FoundShape(id){
     return o;
 }
 
-function ask_isTheShapeInitialisingOnscreen(object, x, y){
+function thisShapeOnscreen(object, x, y){
+    // this math is fucked, fix it one day
     let xn = (x/scale + object.width);
     let yn = (y/scale + object.height);
     x = x/scale;
@@ -32,3 +33,22 @@ function ask_isTheShapeInitialisingOnscreen(object, x, y){
         return true;
     } else {return false;}
 }
+
+
+function thisTextBoxIsntBeingEdited(thisShape){
+    if(textBoxBeingEdited!== thisShape.textBox || textBoxBeingEdited ==undefined){
+        return true
+    }else{return false}
+}
+
+var fullScreenDiv;
+var notFullScreen = true;
+function checkIfNotFullScreen(){
+    if (fullScreenDiv !== (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement)) {
+        fullScreenDiv = undefined;
+        notFullScreen = true;
+    }
+return notFullScreen
+}
+
+    
